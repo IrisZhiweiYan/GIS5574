@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset=utf-8 />
+    <title>Showing an ArcGIS basemap</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
+    <!-- Load Leaflet from CDN -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"
+    integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+    crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"
+    integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
+    crossorigin=""></script>
+
+
+    <!-- Load Esri Leaflet from CDN -->
+    <script src="https://unpkg.com/esri-leaflet@2.2.3/dist/esri-leaflet.js"
+    integrity="sha512-YZ6b5bXRVwipfqul5krehD9qlbJzc6KOGXYsDjU9HHXW2gK57xmWl2gU6nAegiErAqFXhygKIsWPKbjLPXVb2g=="
+    crossorigin=""></script>
+
+    <!-- Include Leaflet.heat via rawgit.com in production you'd be better off hosting this library yourself -->
+    <script src="https://rawgit.com/Leaflet/Leaflet.heat/gh-pages/dist/leaflet-heat.js"></script>
+
+    <!-- Load Heatmap Feature Layer from CDN -->
+    <script src="https://unpkg.com/esri-leaflet-heatmap@2.0.0"></script>
+
+
+    <style>
+        body { margin:0; padding:0; }
+
+        #map { position: absolute; top:0; bottom:0; right:0; left:0; }
+        /* .leaflet-heatmap-layer {
+            opacity: 1;
+        } */
+
+        #filter {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+            background: white;
+            padding: 1em;
+        }
+    </style>
+</head>
+
+<!-- <body onload="initMap()"> -->
+<body>
+
+<div id = "map"></div>
+
+<div id="filter" class="leaflet-bar">
+    <label> Time Filter: Hour is
+        <select id="hour">
+            <option value="">Please select</option>
+            <option value="Hour='0'">0AM</option>
+            <option value="Hour='1'">1AM</option>
+            <option value="Hour='2'">2AM</option>
+            <option value="Hour='3'">3AM</option>
+        </select>
+    </label>
+</div>
+
+<script>
+
+
+    //function initMap() {
+        var map = L.map('map').setView([44.98, -93.26], 13);
+
+        L.esri.basemapLayer('Topographic').addTo(map);
+
+        // Add point heat map layer
+        var heatmap = L.esri.Heat.featureLayer({
+            url: 'https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Police_Incidents_3years/FeatureServer/0',
+            radius: 15,
+            gradient: {0.5: '#8CACC1', 0.9: '#CD353D', 1: '#F9E429'},
+        }).addTo(map);
+
+        
+
+        // Add street incident density layer
+        var sid = L.esri.featureLayer({
+            url: 'https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Street_w_incident_num2/FeatureServer/0',
+            style: function (feature) {
+                var c;
+                if (feature.properties.Density < 0.065) {
+                    c = '#EBF1D8';
+                }
+                else if (feature.properties.Density < 0.13) {
+                    c = '#83B2C1';
+                }
+                else {
+                    c = '#41566D';
+                }
+                return {color: c, opacity: 1, weight: 2};
+            }
+        }).addTo(map);
+
+        var sid0 = L.esri.featureLayer({
+            url: 'https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Street_w_incident_num_0/FeatureServer/0',
+            style: function (feature) {
+                var c;
+                if (feature.properties.Density < 0.065) {
+                    c = '#EBF1D8';
+                }
+                else if (feature.properties.Density < 0.13) {
+                    c = '#83B2C1';
+                }
+                else {
+                    c = '#41566D';
+                }
+                return {color: c, opacity: 0, weight: 2};
+            },
+        }).addTo(map);
+
+        var sid1 = L.esri.featureLayer({
+            url: 'https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Street_w_incident_num_1/FeatureServer/0',
+            style: function (feature) {
+                var c;
+                if (feature.properties.Density < 0.065) {
+                    c = '#EBF1D8';
+                }
+                else if (feature.properties.Density < 0.13) {
+                    c = '#83B2C1';
+                }
+                else {
+                    c = '#41566D';
+                }
+                return {color: c, opacity: 0, weight: 2};
+            },
+        }).addTo(map);
+
+        var sid2 = L.esri.featureLayer({
+            url: 'https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Street_w_incident_num_2/FeatureServer/0',
+            style: function (feature) {
+                var c;
+                if (feature.properties.Density < 0.065) {
+                    c = '#EBF1D8';
+                }
+                else if (feature.properties.Density < 0.13) {
+                    c = '#83B2C1';
+                }
+                else {
+                    c = '#41566D';
+                }
+                return {color: c, opacity: 0, weight: 2};
+            },
+        }).addTo(map);
+
+        var sid3 = L.esri.featureLayer({
+            url: 'https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Street_w_incident_num_3/FeatureServer/0',
+            style: function (feature) {
+                var c;
+                if (feature.properties.Density < 0.065) {
+                    c = '#EBF1D8';
+                }
+                else if (feature.properties.Density < 0.13) {
+                    c = '#83B2C1';
+                }
+                else {
+                    c = '#41566D';
+                }
+                return {color: c, opacity: 0, weight: 2};
+            },
+        }).addTo(map);
+
+        var sid_group = L.layerGroup([sid, sid0, sid1, sid2, sid3]);
+
+        // Add time filter
+        var hour = document.getElementById('hour');
+
+        hour.addEventListener('change', function(){
+            // for (i = 0, len = hour.length; i < len; i++) { 
+            //     sid_group[i].setStyle ({
+            //         opacity : 0,
+            //     });
+            // }
+
+            heatmap.setWhere(hour.value);
+
+            // var hour_value
+            // if (hour.value = ""){
+            //     hour_value = "";
+            // }
+            // else {
+                hour_value = hour.value.slice(-2,-1);
+            // }
+
+            eval("sid"+hour_value+".setStyle ({opacity : 1,});")
+        });
+
+        // Add police station point layer
+        var police_icon = L.icon({
+            iconUrl: 'police_icon.png',
+            iconSize:     [16, 16], // size of the icon
+            iconAnchor:   [0, 0], // point of the icon which will correspond to marker's location
+            // popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+        });
+
+        L.esri.featureLayer({
+            url: 'https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Police_Stations_yan/FeatureServer/0',
+            pointToLayer: function (geojson, latlng) {
+                return L.marker(latlng, {
+                icon: police_icon
+                });
+            },
+        }).addTo(map);
+
+        // Add emergency phone point layer
+        var phone_icon = L.icon({
+            iconUrl: 'phone_icon.png',
+            iconSize:     [16, 16], // size of the icon
+            iconAnchor:   [0, 0], // point of the icon which will correspond to marker's location
+            // popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+        });
+
+            L.esri.featureLayer({
+            url: 'https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Emergency_Phone/FeatureServer/0',
+            pointToLayer: function (geojson, latlng) {
+                return L.marker(latlng, {
+                icon: phone_icon
+                });
+            },
+        }).addTo(map);
+
+    //};
+
+</script>
+
+
+
+</body>
+</html>
